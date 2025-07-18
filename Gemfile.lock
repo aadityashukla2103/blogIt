@@ -161,6 +161,7 @@ GEM
       racc (~> 1.4)
     nokogiri (1.18.8-x86_64-linux-musl)
       racc (~> 1.4)
+    ostruct (0.6.3)
     pp (0.6.2)
       prettyprint
     prettyprint (0.2.0)
@@ -237,14 +238,9 @@ GEM
     sqlite3 (1.7.3-arm64-darwin)
     sqlite3 (1.7.3-x86_64-darwin)
     sqlite3 (1.7.3-x86_64-linux)
-    stimulus-rails (1.3.4)
-      railties (>= 6.0.0)
     stringio (3.1.7)
     thor (1.3.2)
     timeout (0.4.3)
-    turbo-rails (2.0.16)
-      actionpack (>= 7.1.0)
-      railties (>= 7.1.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     web-console (4.2.1)
@@ -280,13 +276,12 @@ DEPENDENCIES
   debug
   jbuilder
   jsbundling-rails
+  ostruct
   puma (>= 5.0)
   rails (~> 7.1.3, >= 7.1.3.4)
   selenium-webdriver
   sprockets-rails
   sqlite3 (~> 1.4)
-  stimulus-rails
-  turbo-rails
   tzinfo-data
   web-console
 
