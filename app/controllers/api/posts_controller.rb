@@ -18,6 +18,7 @@ class Api::PostsController < ApplicationController
 
   def create
     post = Post.new(post_params)
+    post.is_bloggable = true # Set to true by default for new posts
     if post.save
       render json: post, status: :created
     else
