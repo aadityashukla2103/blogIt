@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_20_101101) do
+ActiveRecord::Schema[7.1].define(version: 2025_07_20_101633) do
   create_table "organizations", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -29,4 +29,15 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_20_101101) do
     t.index ["slug"], name: "index_posts_on_slug", unique: true
   end
 
+  create_table "users", force: :cascade do |t|
+    t.string "name"
+    t.string "email"
+    t.string "password_digest"
+    t.integer "organization_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_users_on_organization_id"
+  end
+
+  add_foreign_key "users", "organizations"
 end
