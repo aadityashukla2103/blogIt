@@ -9,6 +9,6 @@ initializeLogger();
 setAuthHeaders();
 
 const componentsContext = { App };
-ReactRailsUJS.getConstructor = (name) => {
+ReactRailsUJS.getConstructor = name => {
   return componentsContext[name];
 };

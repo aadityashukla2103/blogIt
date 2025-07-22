@@ -1,9 +1,35 @@
 # frozen_string_literal: true
 
 class Api::PostsController < ApplicationController
+  include Pagy::Backend
+
   def index
-    posts = Post.all
-    render json: { posts: posts }
+    page = params[:page].to_i
+    items = params[:items].to_i
+
+    page = 1 if page == 0
+    items = 5 if items == 0
+
+    puts "Pagy loaded: #{defined?(Pagy)}"
+    pagy, posts = pagy(
+      Post.includes(:user, :categories),
+      items: items,
+      limit: items,
+      page: page
+    )
+    puts "Posts count: #{posts.count}, Pagy: #{pagy.inspect}"
+
+    render json: {
+      posts: posts.as_json(include: [:user, :categories]),
+      pagy: {
+        page: pagy.page,
+        items: pagy.vars[:items],
+        count: pagy.count,
+        pages: pagy.pages,
+        prev: pagy.prev,
+        next: pagy.next
+      }
+    }
   end
 
   def show

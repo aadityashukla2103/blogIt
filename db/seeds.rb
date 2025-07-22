@@ -9,3 +9,15 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+["Tech", "Ruby on Rails"].each do |cat_name|
+  Category.find_or_create_by!(name: cat_name)
+end
+
+user = User.first
+categories = Category.where(name: ["Tech", "Ruby on Rails"])
+
+Post.find_each do |post|
+  post.user = user
+  post.categories = categories
+  post.save!
+end

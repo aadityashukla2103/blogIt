@@ -1,4 +1,5 @@
 import React from "react";
+
 import { Link } from "react-router-dom";
 
 const PostCard = ({ post, variant = "default" }) => {
@@ -12,7 +13,8 @@ const PostCard = ({ post, variant = "default" }) => {
   // Different card styles based on variant
   const cardStyles = {
     default: "border rounded-lg p-4 shadow-sm hover:shadow-md transition",
-    featured: "bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6",
+    featured:
+      "bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6",
     compact: "border-b border-gray-200 py-4 hover:bg-gray-50 transition-colors",
     list: "w-full border-b border-gray-200 py-8",
   };
@@ -50,22 +52,43 @@ const PostCard = ({ post, variant = "default" }) => {
   return (
     <div className={cardStyles[variant]}>
       <Link to={`/posts/${post.slug}`}>
-        <h2 className={`${titleStyles[variant]} hover:text-blue-600 transition-colors`}>
+        <h2
+          className={`${titleStyles[variant]} transition-colors hover:text-blue-600`}
+        >
           {post.title}
         </h2>
       </Link>
+      {post.categories && post.categories.length > 0 && (
+        <div className="mb-2 flex flex-wrap gap-2">
+          {post.categories.map((cat, idx) => (
+            <span
+              className="rounded bg-green-100 px-2 py-1 text-xs font-semibold text-green-800"
+              key={idx}
+            >
+              {cat}
+            </span>
+          ))}
+        </div>
+      )}
       <p
         className={descriptionStyles[variant]}
         style={getLineClampStyle(variant === "featured" ? 3 : 2)}
       >
         {post.description}
       </p>
-      <div className="flex justify-between items-center">
-        <span className={dateStyles[variant]}>{formatDate(post.created_at)}</span>
+      {post.author && (
+        <div className="mb-1 text-sm text-gray-600">
+          <span className="font-medium">{post.author}</span>
+        </div>
+      )}
+      <div className="flex items-center justify-between">
+        <span className={dateStyles[variant]}>
+          {formatDate(post.created_at)}
+        </span>
         {variant === "list" && (
           <Link
+            className="text-sm font-medium text-blue-600 hover:text-blue-700"
             to={`/posts/${post.slug}`}
-            className="text-blue-600 hover:text-blue-700 font-medium text-sm"
           >
             Read More →
           </Link>
