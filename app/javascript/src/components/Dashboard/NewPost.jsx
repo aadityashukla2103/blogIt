@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
+import categoriesApi from "apis/categories";
 import postsApi from "apis/posts";
 import { useHistory } from "react-router-dom";
+import Select from "react-select";
 
 const NewPost = () => {
   const history = useHistory();
@@ -10,6 +12,20 @@ const NewPost = () => {
     description: "",
   });
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const { data } = await categoriesApi.list();
+        setCategories(data);
+      } catch {
+        setCategories([]);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -17,6 +33,15 @@ const NewPost = () => {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const categoryOptions = categories.map(category => ({
+    value: category.id,
+    label: category.name,
+  }));
+
+  const handleCategoryChange = selectedOptions => {
+    setSelectedCategories(selectedOptions || []);
   };
 
   const handleSubmit = async e => {
@@ -49,13 +74,41 @@ const NewPost = () => {
                 </label>
                 <input
                   required
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className=" w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent"
                   id="title"
                   name="title"
                   placeholder="Enter title"
                   type="text"
                   value={formData.title}
                   onChange={handleChange}
+                />
+              </div>
+              <div>
+                <label
+                  className="mb-2 block text-sm font-semibold text-gray-900"
+                  htmlFor="categories"
+                >
+                  Category*
+                </label>
+                <Select
+                  isMulti
+                  isSearchable
+                  classNamePrefix="react-select"
+                  inputId="categories"
+                  name="categories"
+                  options={categoryOptions}
+                  placeholder="Search category"
+                  value={selectedCategories}
+                  styles={{
+                    control: provided => ({
+                      ...provided,
+                      borderWidth: "1px",
+                      borderStyle: "solid",
+                      borderRadius: "0.5rem",
+                      outline: "none",
+                    }),
+                  }}
+                  onChange={handleCategoryChange}
                 />
               </div>
               <div>
@@ -70,13 +123,14 @@ const NewPost = () => {
                     {formData.description.length}/10000
                   </span>
                 </div>
-                <textarea
+                <input
                   required
-                  className="w-full resize-none rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent"
                   id="description"
+                  maxLength={10000}
                   name="description"
                   placeholder="Enter description"
-                  rows="8"
+                  type="text"
                   value={formData.description}
                   onChange={handleChange}
                 />

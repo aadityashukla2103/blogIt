@@ -10,14 +10,12 @@ class Api::PostsController < ApplicationController
     page = 1 if page == 0
     items = 5 if items == 0
 
-    puts "Pagy loaded: #{defined?(Pagy)}"
     pagy, posts = pagy(
       Post.includes(:user, :categories),
       items: items,
       limit: items,
       page: page
     )
-    puts "Posts count: #{posts.count}, Pagy: #{pagy.inspect}"
 
     render json: {
       posts: posts.as_json(include: [:user, :categories]),

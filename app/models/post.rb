@@ -6,6 +6,7 @@ class Post < ApplicationRecord
   validates :title, presence: true, length: { maximum: 125 }
   validates :description, presence: true, length: { maximum: 10000 }
   validates_inclusion_of :is_bloggable, in: [true, false]
+  before_validation :generate_slug, on: :create
 
   def as_json(options = {})
     super(options.merge(only: [:id, :title, :description, :slug, :created_at, :updated_at])).merge(
@@ -14,4 +15,10 @@ class Post < ApplicationRecord
         categories: categories.pluck(:name)
       })
   end
+
+  private
+
+    def generate_slug
+      self.slug ||= title.parameterize if title.present?
+    end
 end

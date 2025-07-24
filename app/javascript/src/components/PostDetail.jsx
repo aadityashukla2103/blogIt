@@ -69,9 +69,26 @@ const PostDetail = () => {
       </div>
       <article className="mx-auto max-w-4xl">
         <header className="mb-8">
+          {post.categories && post.categories.length > 0 && (
+            <div className="mb-2 flex flex-wrap gap-2">
+              {post.categories.map((cat, idx) => (
+                <span
+                  className="rounded bg-green-100 px-2 py-1 text-xs font-semibold text-green-800"
+                  key={idx}
+                >
+                  {cat}
+                </span>
+              ))}
+            </div>
+          )}
           <h1 className="mb-4 text-4xl font-bold text-gray-900">
             {post.title}
           </h1>
+          {post.author && (
+            <div className="mb-2 text-sm text-gray-700">
+              By <span className="font-medium">{post.author}</span>
+            </div>
+          )}
           <div className="text-sm text-gray-500">
             Published on {formatDate(post.created_at)}
           </div>
