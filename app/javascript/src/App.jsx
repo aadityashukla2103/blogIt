@@ -8,14 +8,13 @@ import NewPost from "./components/Dashboard/NewPost";
 import BlogPosts from "./components/Dashboard/PostsList";
 import HomePage from "./components/HomePage";
 import PostDetail from "./components/PostDetail";
-import Sidebar from "./components/Sidebar";
 
 const App = () => (
   <>
     <ToastContainer />
     <Router>
       <div className="min-h-screen bg-white">
-        <Sidebar />
+        {/* <Sidebar /> */}
         <div className="md:ml-16">
           <Switch>
             <Route exact path="/" render={() => <HomePage />} />

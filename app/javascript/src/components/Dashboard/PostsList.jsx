@@ -8,13 +8,14 @@ import PostsNavbar from "./PostsNavbar";
 
 import Pagination from "../Pagination";
 import PostCard from "../PostCard";
+import Sidebar from "../Sidebar";
 
 const PostsList = () => {
   const [posts, setPosts] = useState([]);
   const [pagy, setPagy] = useState(null);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [categorySidebarOpen, setCategorySidebarOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
 
   const fetchPosts = async (pageNum = 1) => {
@@ -61,11 +62,11 @@ const PostsList = () => {
   if (either(isEmpty, isNil)(filteredPosts)) {
     return (
       <div className="w-full bg-white">
-        <PostsNavbar onOpenCategories={() => setSidebarOpen(true)} />
+        <PostsNavbar onOpenCategories={() => setCategorySidebarOpen(true)} />
         <CategoriesSidebar
-          open={sidebarOpen}
+          open={categorySidebarOpen}
           selectedCategories={selectedCategories}
-          onClose={() => setSidebarOpen(false)}
+          onClose={() => setCategorySidebarOpen(false)}
           onSelectCategory={handleSelectCategory}
         />
         <div className="px-6 py-8 text-center text-gray-600">
@@ -78,11 +79,12 @@ const PostsList = () => {
 
   return (
     <div className="w-full bg-white">
-      <PostsNavbar onOpenCategories={() => setSidebarOpen(true)} />
+      <Sidebar onOpenCategories={() => setCategorySidebarOpen(true)} />
+      <PostsNavbar />
       <CategoriesSidebar
-        open={sidebarOpen}
+        open={categorySidebarOpen}
         selectedCategories={selectedCategories}
-        onClose={() => setSidebarOpen(false)}
+        onClose={() => setCategorySidebarOpen(false)}
         onSelectCategory={handleSelectCategory}
       />
       <div className="px-6 py-8">

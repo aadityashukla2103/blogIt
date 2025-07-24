@@ -2,7 +2,7 @@ import React from "react";
 
 import { Link, useLocation } from "react-router-dom";
 
-const Sidebar = () => {
+const Sidebar = ({ onOpenCategories }) => {
   const location = useLocation();
   const isActive = path => location.pathname === path;
 
@@ -86,6 +86,31 @@ const Sidebar = () => {
             </svg>
             <span className="text-xs">New</span>
           </Link>
+          <button
+            title="Categories"
+            type="button"
+            className={`group flex flex-col items-center ${
+              location.pathname === "/categories"
+                ? "text-white"
+                : "text-gray-400 hover:text-white"
+            }`}
+            onClick={onOpenCategories}
+          >
+            <svg
+              className="mb-1 h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M4 6h16M4 12h16M4 18h16"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span className="text-xs">Categories</span>
+          </button>
           <Link
             title="About"
             to="/about"
