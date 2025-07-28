@@ -9,15 +9,17 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
-["Tech", "Ruby on Rails"].each do |cat_name|
-  Category.find_or_create_by!(name: cat_name)
-end
+user = User.second
+org = user.organization
+category_ids = [1, 2] # IDs of categories like "Frontend", "Ruby"
 
-user = User.first
-categories = Category.where(name: ["Tech", "Ruby on Rails"])
+post = Post.new(
+  title: "Getting Started with Rail",
+  description: "This post explains the basics of Rails for beginners.",
+  user: user,
+  organization_id: 2,
+  is_bloggable: true
+)
 
-Post.find_each do |post|
-  post.user = user
-  post.categories = categories
-  post.save!
-end
+post.category_ids = category_ids
+post.save!

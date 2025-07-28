@@ -4,6 +4,7 @@ class User < ApplicationRecord
   belongs_to :organization
 
   has_secure_password
+  has_secure_token :authentication_token
 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true

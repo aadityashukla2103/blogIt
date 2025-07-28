@@ -4,6 +4,9 @@ Rails.application.routes.draw do
   namespace :api do
     resources :posts, only: [:index, :show, :create, :update, :destroy]
     resources :categories, only: [:index, :create]
+    resources :users, only: [:index, :create]
+    resources :sessions, only: [:create]
+    get "me", to: "users#me"
   end
 
   root "home#index"

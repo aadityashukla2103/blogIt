@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::PostsController < ApplicationController
+class Api::PostsController < Api::ApplicationController
   include Pagy::Backend
 
   def index
@@ -10,8 +10,13 @@ class Api::PostsController < ApplicationController
     page = 1 if page == 0
     items = 5 if items == 0
 
+    # Show posts created by the current user OR posts from the same organization
     pagy, posts = pagy(
-      Post.includes(:user, :categories),
+      Post.includes(:user, :categories).where(
+        "posts.user_id = ? OR posts.organization_id = ?",
+        current_user.id,
+        current_user.organization_id
+      ),
       items: items,
       limit: items,
       page: page
@@ -39,7 +44,9 @@ class Api::PostsController < ApplicationController
 
   def create
     post = Post.new(post_params)
-    post.is_bloggable = true # Set to true by default for new posts
+    post.user = current_user
+    post.organization_id = current_user.organization_id
+    post.is_bloggable = true
     if post.save
       render json: post, status: :created
     else
@@ -69,6 +76,6 @@ class Api::PostsController < ApplicationController
   private
 
     def post_params
-      params.require(:post).permit(:title, :description, :is_bloggable)
+      params.require(:post).permit(:title, :description, :is_bloggable, category_ids: [])
     end
 end

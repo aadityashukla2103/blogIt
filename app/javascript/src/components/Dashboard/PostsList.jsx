@@ -78,28 +78,33 @@ const PostsList = () => {
   }
 
   return (
-    <div className="w-full bg-white">
-      <Sidebar onOpenCategories={() => setCategorySidebarOpen(true)} />
-      <PostsNavbar />
-      <CategoriesSidebar
-        open={categorySidebarOpen}
-        selectedCategories={selectedCategories}
-        onClose={() => setCategorySidebarOpen(false)}
-        onSelectCategory={handleSelectCategory}
+    <div className="flex min-h-screen w-screen bg-white pl-16">
+      <Sidebar
+        className="w-64"
+        onOpenCategories={() => setCategorySidebarOpen(true)}
       />
-      <div className="px-6 py-8">
-        {filteredPosts.map(post => (
-          <PostCard key={post.id} post={post} variant="list" />
-        ))}
-        {pagy && pagy.pages > 1 && (
-          <div className="mt-8 flex items-center justify-end space-x-2">
-            <Pagination
-              currentPage={page}
-              pagy={pagy}
-              onPageChange={handlePageChange}
-            />
-          </div>
-        )}
+      <div className="flex flex-1 flex-col px-8">
+        <PostsNavbar />
+        <CategoriesSidebar
+          open={categorySidebarOpen}
+          selectedCategories={selectedCategories}
+          onClose={() => setCategorySidebarOpen(false)}
+          onSelectCategory={handleSelectCategory}
+        />
+        <div className="py-8">
+          {filteredPosts.map(post => (
+            <PostCard key={post.id} post={post} variant="list" />
+          ))}
+          {pagy && pagy.pages > 1 && (
+            <div className="mt-8 flex items-center justify-end space-x-2">
+              <Pagination
+                currentPage={page}
+                pagy={pagy}
+                onPageChange={handlePageChange}
+              />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

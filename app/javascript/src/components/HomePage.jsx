@@ -29,9 +29,9 @@ const HomePage = () => {
   if (loading) return <div className="p-4 text-center">Loading...</div>;
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen ">
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-100 px-6 py-16 text-center">
+      <div className="w-full bg-gradient-to-br from-blue-50 to-indigo-100 px-6 py-16 text-center">
         <h1 className="mb-4 text-5xl font-bold text-gray-900">
           Welcome to BlogIt
         </h1>

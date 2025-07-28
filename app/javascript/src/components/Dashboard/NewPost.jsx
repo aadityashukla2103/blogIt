@@ -49,7 +49,12 @@ const NewPost = () => {
     setLoading(true);
 
     try {
-      await postsApi.create(formData);
+      await postsApi.create({
+        post: {
+          ...formData,
+          category_ids: selectedCategories.map(cat => cat.value),
+        },
+      });
       history.push("/posts");
     } catch {
       // Error handling for creating post
