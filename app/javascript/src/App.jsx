@@ -6,6 +6,8 @@ import { ToastContainer } from "react-toastify";
 import AboutPage from "./components/AboutPage";
 import Login from "./components/Authentication/Login";
 import Signup from "./components/Authentication/Signup";
+import EditPost from "./components/Dashboard/EditPost";
+import MyPosts from "./components/Dashboard/MyPosts";
 import NewPost from "./components/Dashboard/NewPost";
 import BlogPosts from "./components/Dashboard/PostsList";
 import HomePage from "./components/HomePage";
@@ -21,8 +23,10 @@ const App = () => (
         <Route exact component={HomePage} path="/" />
         <Route exact path="/about" render={() => <AboutPage />} />
         <Route exact path="/posts" render={() => <BlogPosts />} />
+        <Route exact path="/my-posts" render={() => <MyPosts />} />
         <Route exact path="/posts/new" render={() => <NewPost />} />
-        <Route path="/posts/:slug" render={() => <PostDetail />} />
+        <Route exact component={EditPost} path="/posts/:slug/edit" />
+        <Route exact path="/posts/:slug" render={() => <PostDetail />} />
       </Switch>
     </Router>
   </>

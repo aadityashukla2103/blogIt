@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useCallback } from "react";
 
+import { Edit } from "@bigbinary/neeto-icons";
+import { Button } from "@bigbinary/neetoui";
 import postsApi from "apis/posts";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useHistory } from "react-router-dom";
 
 const PostDetail = () => {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { slug } = useParams();
+  const history = useHistory();
 
   const fetchPost = useCallback(async () => {
     try {
@@ -46,12 +49,18 @@ const PostDetail = () => {
         <div className="mt-12 text-center text-gray-600">
           <h1 className="mb-4 text-2xl font-bold">Post Not Found</h1>
           <p className="mb-6">The post you're looking for doesn't exist.</p>
-          <Link
+          {/* <Link
             className="font-semibold text-blue-600 hover:text-blue-700"
             to="/posts"
+
           >
             ← Back to Posts
-          </Link>
+          </Link> */}
+          <Button
+            label="Cancel"
+            style="secondary"
+            onClick={() => history.goBack()}
+          />
         </div>
       </div>
     );
@@ -81,9 +90,18 @@ const PostDetail = () => {
               ))}
             </div>
           )}
-          <h1 className="mb-4 text-4xl font-bold text-gray-900">
-            {post.title}
-          </h1>
+          <div className="mb-4 flex items-center justify-between">
+            <h1 className="mr-2 text-4xl font-bold text-gray-900">
+              {post.title}
+            </h1>
+            <Link
+              className="ml-2 text-gray-500 hover:text-blue-600"
+              title="Edit Post" // updated hover color
+              to={`/posts/${slug}/edit`}
+            >
+              <Edit size={30} />
+            </Link>
+          </div>
           {post.author && (
             <div className="mb-2 text-sm text-gray-700">
               By <span className="font-medium">{post.author}</span>

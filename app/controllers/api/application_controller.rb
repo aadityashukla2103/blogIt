@@ -19,9 +19,9 @@ class Api::ApplicationController < ActionController::Base
       if is_valid_token
         @current_user = user
       else
-        render_error("Could not authenticate with the provided credentials", :unauthorized)
+        render_error("session.could_not_authenticate", :unauthorized)
       end
-    end
+end
 
     def current_user
       @current_user

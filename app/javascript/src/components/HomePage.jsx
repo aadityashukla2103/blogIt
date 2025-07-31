@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 
+import { navigate } from "@storybook/addon-links";
 import postsApi from "apis/posts";
 import { either, isEmpty, isNil, take } from "ramda";
 import { Link } from "react-router-dom";
@@ -15,8 +16,10 @@ const HomePage = () => {
       const { data } = await postsApi.list();
       // Take only the first 3 posts for the home page
       setPosts(take(3, data.posts));
-    } catch {
-      // Error handling for fetching posts
+    } catch (error) {
+      if (error.response?.status === 401) {
+        navigate("/login");
+      }
     } finally {
       setLoading(false);
     }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 
+import { Avatar } from "@bigbinary/neetoui";
 import userApi from "apis/user";
 import { Link, useLocation } from "react-router-dom";
 
@@ -88,6 +89,30 @@ const Sidebar = ({ onOpenCategories }) => {
             <span className="text-xs">Posts</span>
           </Link>
           <Link
+            title="My Posts"
+            to="/my-posts"
+            className={`group flex flex-col items-center ${
+              isActive("/my-posts")
+                ? "text-white"
+                : "text-gray-400 hover:text-white"
+            }`}
+          >
+            <svg
+              className="mb-1 h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span className="text-xs">My Posts</span>
+          </Link>
+          <Link
             title="New Post"
             to="/posts/new"
             className={`group flex flex-col items-center ${
@@ -168,11 +193,14 @@ const Sidebar = ({ onOpenCategories }) => {
           <div className="absolute left-full top-1/2 ml-2 w-64 -translate-y-1/2 transform rounded-lg border border-gray-200 bg-white p-4 shadow-lg">
             {/* User Information Section */}
             <div className="mb-4 flex items-center">
-              <div className="mr-3 flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-xl font-bold text-white">
-                <span aria-label="User" role="img">
-                  👤
-                </span>
-              </div>
+              {/* <div className="mr-3 flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-xl font-bold text-white"> */}
+              <Avatar
+                user={{
+                  name: "Aaditya Shukla",
+                }}
+                onClick={function noRefCheck() {}}
+              />
+              {/* </div> */}
               <div>
                 <div className="text-sm font-semibold text-gray-900">
                   {username}
@@ -206,9 +234,14 @@ const Sidebar = ({ onOpenCategories }) => {
           className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-blue-600 text-xl font-bold text-white transition-colors hover:bg-blue-700"
           onClick={toggleDropdown}
         >
-          <span aria-label="User" role="img">
-            👤
-          </span>
+          <Avatar
+            showTooltip
+            className="cursor-pointer"
+            user={{
+              name: "Aaditya Shukla",
+            }}
+            onClick={function noRefCheck() {}}
+          />
         </button>
       </div>
     </aside>

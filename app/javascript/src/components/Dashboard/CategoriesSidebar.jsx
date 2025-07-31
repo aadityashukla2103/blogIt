@@ -185,7 +185,7 @@ const CategoriesSidebar = ({
             <div className="py-4 text-center">Loading...</div>
           ) : (
             filteredCategories.map(c => {
-              const isSelected = selectedCategories.includes(c.name);
+              const isSelected = selectedCategories.includes(c.id);
 
               return (
                 <button
@@ -198,8 +198,8 @@ const CategoriesSidebar = ({
                   }`}
                   onClick={() => {
                     const newSelected = isSelected
-                      ? selectedCategories.filter(name => name !== c.name)
-                      : [...selectedCategories, c.name];
+                      ? selectedCategories.filter(id => id !== c.id)
+                      : [...selectedCategories, c.id];
                     onSelectCategory(newSelected);
                   }}
                 >

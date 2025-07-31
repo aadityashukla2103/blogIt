@@ -4,29 +4,35 @@ class Api::PostsController < Api::ApplicationController
   include Pagy::Backend
 
   def index
+    return render json: { error: "Unauthorized" }, status: :unauthorized unless current_user
+
     page = params[:page].to_i
     items = params[:items].to_i
-
     page = 1 if page == 0
     items = 5 if items == 0
 
-    # Show posts created by the current user OR posts from the same organization
-    pagy, posts = pagy(
-      Post.includes(:user, :categories).where(
-        "posts.user_id = ? OR posts.organization_id = ?",
-        current_user.id,
-        current_user.organization_id
-      ),
-      items: items,
-      limit: items,
-      page: page
-    )
+    Rails.logger.info "DEBUG: page=#{page}, items=#{items}, params=#{params.inspect}"
+
+    posts = Post.includes(:user, :categories)
+      .where("posts.user_id = ? OR posts.organization_id = ?", current_user.id, current_user.organization_id)
+      .order(created_at: :desc)
+
+    posts = posts.where(status: params[:status]) if params[:status].present?
+    category_ids = Array(params[:category_ids])
+    posts = posts.joins(:categories).where(categories: { id: category_ids }).distinct if category_ids.present?
+
+    Rails.logger.info "DEBUG: Before pagy - posts.count=#{posts.count}, items=#{items}, page=#{page}"
+
+    # DO NOT call .to_a or .all here!
+    pagy, records = pagy(posts, limit: items, page: page)
+
+    Rails.logger.info "DEBUG: After pagy - pagy.items=#{pagy.vars[:items]}, pagy.count=#{pagy.count}, records.count=#{records.count}"
 
     render json: {
-      posts: posts.as_json(include: [:user, :categories]),
+      posts: records.as_json(include: [:user, :categories]),
       pagy: {
         page: pagy.page,
-        items: pagy.vars[:items],
+        items: items, # Use the items variable directly
         count: pagy.count,
         pages: pagy.pages,
         prev: pagy.prev,
@@ -43,6 +49,7 @@ class Api::PostsController < Api::ApplicationController
   end
 
   def create
+    puts "Received params: #{params.inspect}"
     post = Post.new(post_params)
     post.user = current_user
     post.organization_id = current_user.organization_id
@@ -76,6 +83,6 @@ class Api::PostsController < Api::ApplicationController
   private
 
     def post_params
-      params.require(:post).permit(:title, :description, :is_bloggable, category_ids: [])
+      params.require(:post).permit(:title, :description, :status, :published_at, category_ids: [])
     end
 end

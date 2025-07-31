@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Api::UsersController < Api::ApplicationController
+  skip_before_action :authenticate_user_using_x_auth_token, only: :create
   def create
     org = Organization.find_or_create_by!(name: user_params[:organization])
     user = User.new(user_params.except(:organization))
