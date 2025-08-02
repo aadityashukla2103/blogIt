@@ -7,7 +7,7 @@ class Api::UsersController < Api::ApplicationController
     user = User.new(user_params.except(:organization))
     user.organization = org
     user.save!
-    render_notice("User was successfully created!")
+    render json: { notice: "Signed up successfully" }, status: :created
   end
 
   def me

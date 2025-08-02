@@ -136,17 +136,15 @@ const EditPost = () => {
             Edit blog post
           </h1>
           <div className="flex h-40 items-center gap-2 space-x-2">
-            <Button
-              icon="expand"
-              label="Preview"
-              style="secondary"
+            <svg
+              className="h-8 w-8 cursor-pointer"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
               onClick={() => window.open(`/posts/${slug}`, "_blank")}
-            />
-            <Button
-              label="Cancel"
-              style="secondary"
-              onClick={() => history.push("/posts")}
-            />
+            >
+              <path d="M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z" />
+            </svg>
             <Dropdown
               label="Publish"
               buttonProps={{

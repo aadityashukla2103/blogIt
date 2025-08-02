@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import { Pagination } from "@bigbinary/neetoui";
 import postsApi from "apis/posts";
@@ -18,31 +18,31 @@ const PostsList = () => {
   const [categorySidebarOpen, setCategorySidebarOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
 
-  const fetchPosts = async (pageNum = 1, categoryIds = selectedCategories) => {
-    setLoading(true);
-    try {
-      const { data } = await postsApi.list(
-        pageNum,
-        5, // Reduced from 5 to 3 to test pagination with 11 posts
-        categoryIds,
-        "published"
-      );
-      setPosts(data.posts);
-      setPagy(data.pagy);
-      setPage(pageNum);
-    } catch {
-      // handle error
-    } finally {
-      setLoading(false);
-
-      // eslint-disable-next-line no-console
-      console.log("Posts fetched successfully");
-    }
-  };
+  const fetchPosts = useCallback(
+    async (pageNum = 1, categoryIds = selectedCategories) => {
+      setLoading(true);
+      try {
+        const { data } = await postsApi.list(
+          pageNum,
+          5,
+          categoryIds,
+          "published"
+        );
+        setPosts(data.posts);
+        setPagy(data.pagy);
+        setPage(pageNum);
+      } catch {
+        // handle error
+      } finally {
+        setLoading(false);
+      }
+    },
+    [selectedCategories]
+  );
 
   useEffect(() => {
     fetchPosts(page);
-  }, []);
+  }, [fetchPosts, page]);
 
   const handlePageChange = newPage => {
     if (newPage !== page && newPage > 0 && (!pagy || newPage <= pagy.pages)) {
@@ -59,15 +59,23 @@ const PostsList = () => {
 
   if (either(isEmpty, isNil)(posts)) {
     return (
-      <div className="w-full bg-white">
+      <div className="flex flex-col bg-white md:min-h-screen md:flex-row">
+        {/* Top navbar (always visible) */}
         <PostsNavbar onOpenCategories={() => setCategorySidebarOpen(true)} />
+        {/* Sidebar - visible only on medium (md) and up */}
+        <Sidebar
+          className="hidden w-64 md:block"
+          onOpenCategories={() => setCategorySidebarOpen(true)}
+        />
+        {/* Slide-out category sidebar (used on all screen sizes) */}
         <CategoriesSidebar
           open={categorySidebarOpen}
           selectedCategories={selectedCategories}
           onClose={() => setCategorySidebarOpen(false)}
           onSelectCategory={handleSelectCategory}
         />
-        <div className="px-6 py-8 text-center text-gray-600">
+        {/* Main content */}
+        <div className="flex-1 px-4 py-8 text-center text-gray-600 sm:px-6 md:px-8">
           <p className="mb-4 text-lg">No blog posts found!</p>
           <p className="text-sm">Create your first post to get started.</p>
         </div>

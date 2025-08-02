@@ -6,30 +6,32 @@ import { Redirect, Route } from "react-router-dom";
 const PrivateRoute = ({
   component: Component,
   condition,
+  exact,
   path,
-  redirectRoute,
+  redirect,
   ...props
 }) => {
   if (!condition) {
     return (
       <Redirect
         to={{
-          pathname: redirectRoute,
-          from: props.location,
+          pathname: redirect,
+          state: { from: props.location },
         }}
       />
     );
   }
 
-  return <Route component={Component} path={path} {...props} />;
+  return <Route component={Component} exact={exact} path={path} {...props} />;
 };
 
 PrivateRoute.propTypes = {
   component: PropTypes.func,
   condition: PropTypes.bool,
-  path: PropTypes.string,
-  redirectRoute: PropTypes.string,
+  exact: PropTypes.bool,
   location: PropTypes.object,
+  path: PropTypes.string,
+  redirect: PropTypes.string,
 };
 
 export default PrivateRoute;

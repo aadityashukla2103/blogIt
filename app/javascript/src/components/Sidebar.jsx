@@ -2,17 +2,16 @@ import React, { useState, useEffect } from "react";
 
 import { Avatar } from "@bigbinary/neetoui";
 import userApi from "apis/user";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useHistory } from "react-router-dom";
+
+import { useAuth } from "./commons/AuthContext";
 
 import { clearAuthFromLocalStorage } from "../utils/storage";
 
-const handleLogout = () => {
-  clearAuthFromLocalStorage();
-  window.location.href = "/login";
-};
-
 const Sidebar = ({ onOpenCategories }) => {
   const location = useLocation();
+  const history = useHistory();
+  const { logout } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const isActive = path => location.pathname === path;
   const [username, setUsername] = useState("");
@@ -20,6 +19,12 @@ const Sidebar = ({ onOpenCategories }) => {
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleLogout = () => {
+    clearAuthFromLocalStorage();
+    logout(); // Update auth context
+    history.push("/login");
   };
 
   const fetchUser = async () => {

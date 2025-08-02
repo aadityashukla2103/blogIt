@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 
 import { Edit } from "@bigbinary/neeto-icons";
-import { Button } from "@bigbinary/neetoui";
+import { Button, Tag } from "@bigbinary/neetoui";
 import postsApi from "apis/posts";
 import { useParams, Link, useHistory } from "react-router-dom";
 
@@ -91,9 +91,12 @@ const PostDetail = () => {
             </div>
           )}
           <div className="mb-4 flex items-center justify-between">
-            <h1 className="mr-2 text-4xl font-bold text-gray-900">
-              {post.title}
-            </h1>
+            <div className="flex items-center">
+              <h1 className="mr-2 text-4xl font-bold text-gray-900">
+                {post.title}
+              </h1>
+              {post.status === "draft" && <Tag label="Draft" style="danger" />}
+            </div>
             <Link
               className="ml-2 text-gray-500 hover:text-blue-600"
               title="Edit Post" // updated hover color

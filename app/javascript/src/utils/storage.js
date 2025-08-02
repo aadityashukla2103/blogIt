@@ -10,3 +10,5 @@ export const clearAuthFromLocalStorage = () => {
   localStorage.removeItem("userId");
   localStorage.removeItem("userName");
 };
+
+export const getFromLocalStorage = key => localStorage.getItem(key);
