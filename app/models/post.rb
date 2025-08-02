@@ -3,10 +3,12 @@
 class Post < ApplicationRecord
   enum status: { draft: "draft", published: "published" }
   belongs_to :user, optional: true
+  belongs_to :organization, optional: true
   has_and_belongs_to_many :categories
   validates :title, presence: true, length: { maximum: 125 }
   validates :description, presence: true, length: { maximum: 10000 }
   validates_inclusion_of :is_bloggable, in: [true, false]
+  validates :slug, uniqueness: true
 
   before_validation :generate_slug, on: [:create, :update]
 
