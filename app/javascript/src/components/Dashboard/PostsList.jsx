@@ -59,25 +59,28 @@ const PostsList = () => {
 
   if (either(isEmpty, isNil)(posts)) {
     return (
-      <div className="flex flex-col bg-white md:min-h-screen md:flex-row">
-        {/* Top navbar (always visible) */}
-        <PostsNavbar onOpenCategories={() => setCategorySidebarOpen(true)} />
-        {/* Sidebar - visible only on medium (md) and up */}
+      <div>
+        {/* Fixed Sidebar */}
         <Sidebar
-          className="hidden w-64 md:block"
+          className="fixed top-0 hidden h-screen w-16 border-r border-gray-200 md:block"
           onOpenCategories={() => setCategorySidebarOpen(true)}
         />
-        {/* Slide-out category sidebar (used on all screen sizes) */}
-        <CategoriesSidebar
-          open={categorySidebarOpen}
-          selectedCategories={selectedCategories}
-          onClose={() => setCategorySidebarOpen(false)}
-          onSelectCategory={handleSelectCategory}
-        />
-        {/* Main content */}
-        <div className="flex-1 px-4 py-8 text-center text-gray-600 sm:px-6 md:px-8">
-          <p className="mb-4 text-lg">No blog posts found!</p>
-          <p className="text-sm">Create your first post to get started.</p>
+        {/* Main content shifted right */}
+        <div className="flex min-h-screen flex-col bg-white md:ml-16">
+          {/* Top navbar */}
+          <PostsNavbar onOpenCategories={() => setCategorySidebarOpen(true)} />
+          {/* Slide-out category sidebar */}
+          <CategoriesSidebar
+            open={categorySidebarOpen}
+            selectedCategories={selectedCategories}
+            onClose={() => setCategorySidebarOpen(false)}
+            onSelectCategory={handleSelectCategory}
+          />
+          {/* Centered content */}
+          <div className="px-6 py-8 text-center text-gray-600">
+            <p className="mb-4 text-lg">No blog posts found!</p>
+            <p className="text-sm">Create your first post to get started.</p>
+          </div>
         </div>
       </div>
     );

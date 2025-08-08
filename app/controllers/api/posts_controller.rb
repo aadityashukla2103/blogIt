@@ -6,24 +6,15 @@ class Api::PostsController < Api::ApplicationController
   def index
     return render json: { error: "Unauthorized" }, status: :unauthorized unless current_user
 
-    page = params[:page].to_i
-    items = params[:items].to_i
-    page = 1 if page == 0
-    items = 5 if items == 0
+    page = params[:page].to_i.presence || 1
+    items = params[:items].to_i.presence || 5
 
     Rails.logger.info "DEBUG: page=#{page}, items=#{items}, params=#{params.inspect}"
 
-    posts = Post.includes(:user, :categories)
-      .where("posts.user_id = ? OR posts.organization_id = ?", current_user.id, current_user.organization_id)
-      .order(created_at: :desc)
+    posts = Posts::FilterService.new(current_user, params).perform
 
-    posts = posts.where(status: params[:status]) if params[:status].present?
-    category_ids = Array(params[:category_ids])
-    posts = posts.joins(:categories).where(categories: { id: category_ids }).distinct if category_ids.present?
+    Rails.logger.info "DEBUG: Before pagy - posts.count=#{posts.count}"
 
-    Rails.logger.info "DEBUG: Before pagy - posts.count=#{posts.count}, items=#{items}, page=#{page}"
-
-    # DO NOT call .to_a or .all here!
     pagy, records = pagy(posts, limit: items, page: page)
 
     Rails.logger.info "DEBUG: After pagy - pagy.items=#{pagy.vars[:items]}, pagy.count=#{pagy.count}, records.count=#{records.count}"
@@ -32,7 +23,7 @@ class Api::PostsController < Api::ApplicationController
       posts: records.as_json(include: [:user, :categories]),
       pagy: {
         page: pagy.page,
-        items: items, # Use the items variable directly
+        items: items,
         count: pagy.count,
         pages: pagy.pages,
         prev: pagy.prev,
@@ -78,6 +69,26 @@ class Api::PostsController < Api::ApplicationController
     render json: { message: "Post deleted successfully" }
   rescue ActiveRecord::RecordNotFound
     render json: { error: "Post not found" }, status: :not_found
+  end
+
+  def bulk_update
+    posts = Post.where(id: params[:ids])
+
+    posts.each do |post|
+      if params[:status] == "published"
+        # Set published_at only if it's not already set
+        post.update(status: "published", published_at: post.published_at || Time.current)
+      else
+        post.update(status: params[:status], published_at: nil)
+      end
+    end
+
+    head :ok
+  end
+
+  def bulk_destroy
+    Post.where(id: params[:ids]).destroy_all
+    head :ok
   end
 
   private
