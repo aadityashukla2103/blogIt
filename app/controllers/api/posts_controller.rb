@@ -6,35 +6,36 @@ class Api::PostsController < Api::ApplicationController
   def index
     return render json: { error: "Unauthorized" }, status: :unauthorized unless current_user
 
-    page = params[:page].to_i.presence || 1
-    items = params[:items].to_i.presence || 5
-
-    Rails.logger.info "DEBUG: page=#{page}, items=#{items}, params=#{params.inspect}"
+    @page = params[:page].to_i.presence || 1
+    @items = params[:items].to_i.presence || 5
 
     posts = Posts::FilterService.new(current_user, params).perform
-
-    Rails.logger.info "DEBUG: Before pagy - posts.count=#{posts.count}"
-
-    pagy, records = pagy(posts, limit: items, page: page)
-
-    Rails.logger.info "DEBUG: After pagy - pagy.items=#{pagy.vars[:items]}, pagy.count=#{pagy.count}, records.count=#{records.count}"
+    @pagy, @records = pagy(posts, limit: @items, page: @page)
 
     render json: {
-      posts: records.as_json(include: [:user, :categories]),
+      posts: @records.map do |post|
+        post.as_json(only: [:id, :title, :description, :slug, :created_at, :is_bloggable])
+          .merge(
+            net_votes: post.net_votes,
+            user_vote: post.votes.find_by(user_id: current_user.id)&.vote_type,
+            )
+      end,
       pagy: {
-        page: pagy.page,
-        items: items,
-        count: pagy.count,
-        pages: pagy.pages,
-        prev: pagy.prev,
-        next: pagy.next
+        page: @pagy.page,
+        items: @pagy.vars[:items],
+        pages: @pagy.pages,
+        count: @pagy.count
       }
     }
   end
 
   def show
     post = Post.find_by_slug(params[:id]) || Post.find(params[:id])
-    render json: post
+    render json: post.as_json(only: [:id, :title, :description, :slug, :created_at, :is_bloggable])
+      .merge(
+        net_votes: post.net_votes,
+        user_vote: post.votes.find_by(user_id: current_user.id)&.vote_type,
+                       )
   rescue ActiveRecord::RecordNotFound
     render json: { error: "Post not found" }, status: :not_found
   end

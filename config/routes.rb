@@ -7,6 +7,7 @@ Rails.application.routes.draw do
         put "bulk_update"
         delete "bulk_destroy"
       end
+      resources :votes, only: [:create]
     end
     resources :categories, only: [:index, :create]
     resources :users, only: [:index, :create]

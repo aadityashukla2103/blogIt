@@ -1,98 +1,89 @@
-import React from "react";
+import React, { useState } from "react";
 
+import { UpArrow, DownArrow } from "@bigbinary/neeto-icons";
+import { Tag } from "@bigbinary/neetoui";
+import postsApi from "apis/posts";
 import { Link } from "react-router-dom";
 
-const PostCard = ({ post, variant = "default" }) => {
+const PostCard = ({ post }) => {
   const formatDate = dateString =>
     new Date(dateString).toLocaleDateString("en-GB", {
-      day: "2-digit",
+      day: "numeric",
       month: "long",
       year: "numeric",
     });
 
-  // Different card styles based on variant
-  const cardStyles = {
-    default: "border rounded-lg p-4 shadow-sm hover:shadow-md transition",
-    featured:
-      "bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6",
-    compact: "border-b border-gray-200 py-4 hover:bg-gray-50 transition-colors",
-    list: "w-full border-b border-gray-200 py-8",
-  };
+  // Local state for votes
+  const [netVotes, setNetVotes] = useState(post.net_votes);
+  const [userVote, setUserVote] = useState(post.user_vote || null); // "upvote", "downvote", or null
+  const [isBloggable, setIsBloggable] = useState(post.is_bloggable);
 
-  const titleStyles = {
-    default: "text-lg font-semibold mb-1",
-    featured: "text-xl font-semibold mb-3 text-gray-900 line-clamp-2",
-    compact: "text-md font-semibold mb-1",
-    list: "text-2xl font-bold mb-2 text-gray-900",
-  };
+  const handleVoteChange = voteType => async () => {
+    if (userVote === voteType) return;
 
-  const descriptionStyles = {
-    default: "text-sm text-gray-700 overflow-hidden",
-    featured: "text-gray-600 mb-4 overflow-hidden",
-    compact: "text-sm text-gray-600 overflow-hidden",
-    list: "text-base text-gray-700 mb-2 overflow-hidden",
-  };
+    try {
+      const response = await postsApi.vote({
+        postId: post.id,
+        voteType, // must be "upvote" or "downvote"
+      });
 
-  const dateStyles = {
-    default: "mt-3 text-xs text-gray-500",
-    featured: "text-sm text-gray-500",
-    compact: "text-xs text-gray-500 mt-1",
-    list: "text-xs text-gray-400",
+      setNetVotes(response.data.net_votes);
+      setUserVote(response.data.user_vote);
+      setIsBloggable(response.data.is_bloggable);
+    } catch {
+      // handle error
+    }
   };
-
-  // Custom line clamp styles
-  const getLineClampStyle = lines => ({
-    display: "-webkit-box",
-    WebkitLineClamp: lines,
-    WebkitBoxOrient: "vertical",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-  });
 
   return (
-    <div className={cardStyles[variant]}>
-      <Link to={`/posts/${post.slug}`}>
-        <h2
-          className={`${titleStyles[variant]} transition-colors hover:text-blue-600`}
-        >
-          {post.title}
-        </h2>
-      </Link>
-      {post.categories && post.categories.length > 0 && (
-        <div className="mb-2 flex flex-wrap gap-2">
-          {post.categories.map((cat, idx) => (
-            <span
-              className="rounded bg-green-100 px-2 py-1 text-xs font-semibold text-green-800"
-              key={idx}
-            >
-              {cat}
-            </span>
-          ))}
-        </div>
-      )}
-      <p
-        className={descriptionStyles[variant]}
-        style={getLineClampStyle(variant === "featured" ? 3 : 2)}
-      >
-        {post.description}
-      </p>
-      {post.author && (
-        <div className="mb-1 text-sm text-gray-600">
-          <span className="font-medium">{post.author}</span>
-        </div>
-      )}
-      <div className="flex items-center justify-between">
-        <span className={dateStyles[variant]}>
-          {formatDate(post.created_at)}
-        </span>
-        {variant === "list" && (
-          <Link
-            className="text-sm font-medium text-blue-600 hover:text-blue-700"
-            to={`/posts/${post.slug}`}
-          >
-            Read More →
+    <div className="flex items-start justify-between border-b border-gray-200 py-6">
+      {/* Left side - Post details */}
+      <div>
+        {/* Title */}
+        <div className="flex gap-4">
+          <Link to={`/posts/${post.slug}`}>
+            <h2 className="text-lg font-semibold text-gray-900 transition-colors hover:text-blue-600">
+              {post.title}
+            </h2>
           </Link>
+          {isBloggable && <Tag label="Blog it" size="small" style="success" />}
+        </div>
+        {/* Categories */}
+        {post.categories?.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-2">
+            {post.categories.map((cat, idx) => (
+              <span
+                className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-800"
+                key={idx}
+              >
+                {cat}
+              </span>
+            ))}
+          </div>
         )}
+        {/* Author + Date */}
+        <div className="mt-2 text-sm text-gray-600">
+          <span className="font-medium">{post.author}</span>
+          <span className="ml-2">{formatDate(post.created_at)}</span>
+        </div>
+      </div>
+      {/* Voting Section */}
+      <div className="flex flex-col items-center gap-1">
+        <UpArrow
+          size={40}
+          className={`cursor-pointer ${
+            userVote === "upvote" ? "text-gray-800" : "text-green-600"
+          }`}
+          onClick={handleVoteChange("upvote")}
+        />
+        <span className="text-2xl font-semibold">{netVotes}</span>
+        <DownArrow
+          size={40}
+          className={`cursor-pointer ${
+            userVote === "downvote" ? "text-gray-800" : "text-red-600"
+          }`}
+          onClick={handleVoteChange("downvote")}
+        />
       </div>
     </div>
   );

@@ -28,6 +28,20 @@ const deleteAll = ids =>
     data: { ids },
   });
 
-const postsApi = { list, show, create, update, destroy, updateAll, deleteAll };
+const vote = ({ postId, voteType }) =>
+  axios.post(`/posts/${postId}/votes`, {
+    vote: { vote_type: voteType }, // key name must be vote.vote_type
+  });
+
+const postsApi = {
+  list,
+  show,
+  create,
+  update,
+  destroy,
+  updateAll,
+  deleteAll,
+  vote,
+};
 
 export default postsApi;
